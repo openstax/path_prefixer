@@ -3,6 +3,8 @@
 [![Build Status](https://travis-ci.org/openstax/path_prefixer.svg?branch=master)](https://travis-ci.org/openstax/path_prefixer)
 
 This gem lets all routes in your app be accessed with an optional path prefix.
+It also modifies redirects to add the prefix to the redirect location when the
+incoming request had the prefix.
 
 
 To use the gem, simply add it to your Gemfile:

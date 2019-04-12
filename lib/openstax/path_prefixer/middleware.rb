@@ -10,7 +10,12 @@ module OpenStax
         prefix = OpenStax::PathPrefixer.configuration.prefix
 
         if env['PATH_INFO'].present? && !prefix.blank?
-          env['PATH_INFO'].gsub!(/^\/#{prefix}/,'')
+          if env['PATH_INFO'] == "/#{prefix}" ||
+             env['PATH_INFO'].starts_with?("/#{prefix}/")
+
+            env['PATH_INFO'].gsub!(/^\/#{prefix}/,'')
+            env["openstax_path_prefixer_request_was_prefixed"] = true
+          end
         end
 
         @app.call(env)
