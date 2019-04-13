@@ -1,5 +1,6 @@
 ActionController::Base.class_exec do
 
+  # Copied from actionpack-5.2.3/lib/action_controller/metal/redirecting.rb
   def _compute_redirect_to_location(request, options) #:nodoc:
     case options
     # The scheme name consist of a letter followed by any combination of
@@ -11,13 +12,7 @@ ActionController::Base.class_exec do
       options
     when String
       ##### BEGIN MODIFICATION FROM ORIGINAL RAILS CODE #####
-      options =
-        if request.env["openstax_path_prefixer_already_prefixed"]
-          options
-        else
-          request.env["openstax_path_prefixer_already_prefixed"] = true
-          "/#{OpenStax::PathPrefixer.configuration.prefix}#{options}"
-        end
+      options = "#{request.script_name}#{options}"
       ##### END MODIFICATION FROM ORIGINAL RAILS CODE   #####
 
       request.protocol + request.host_with_port + options

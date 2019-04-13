@@ -55,6 +55,16 @@ RSpec.describe 'path prefixer', type: :request do
       expect(URI(response.location).path).to eq "/a_prefix/an_action"
     end
 
+    it "should redirect within-app path helper requests using the prefix" do
+      get("/a_prefix/local_redirect_via_path_helper")
+      expect(URI(response.location).path).to eq "/a_prefix/an_action"
+    end
+
+    it "should not prefix when redirecting using within-app path helper when requests don't use the prefix" do
+      get("/local_redirect_via_path_helper")
+      expect(URI(response.location).path).to eq "/an_action"
+    end
+
     it "should redirect within-app proc-based requests using the prefix" do
       get("/a_prefix/local_redirect_via_proc")
       expect(URI(response.location).path).to eq "/a_prefix/an_action"
@@ -62,6 +72,11 @@ RSpec.describe 'path prefixer', type: :request do
 
     it "should not prefix redirects if the original request isn't prefixed" do
       get("/local_redirect_via_action")
+      expect(URI(response.location).path).to eq "/an_action"
+    end
+
+    it "should not prefix path string redirects if the original request isn't prefixed" do
+      get("/local_redirect_via_path_string")
       expect(URI(response.location).path).to eq "/an_action"
     end
 

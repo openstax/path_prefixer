@@ -23,6 +23,10 @@ class DummyController < ApplicationController
     redirect_to an_action_url
   end
 
+  def local_redirect_via_path_helper
+    redirect_to an_action_url
+  end
+
   def local_redirect_via_proc
     redirect_to proc { an_action_url }
   end
