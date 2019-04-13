@@ -1,26 +1,31 @@
 ActionController::Base.class_exec do
 
-  alias_method :_original_compute_redirect_to_location, :_compute_redirect_to_location
   def _compute_redirect_to_location(request, options) #:nodoc:
-    location = _original_compute_redirect_to_location(request, options)
+    case options
+    # The scheme name consist of a letter followed by any combination of
+    # letters, digits, and the plus ("+"), period ("."), or hyphen ("-")
+    # characters; and is terminated by a colon (":").
+    # See https://tools.ietf.org/html/rfc3986#section-3.1
+    # The protocol relative scheme starts with a double slash "//".
+    when /\A([a-z][a-z\d\-+\.]*:|\/\/).*/i
+      options
+    when String
+      ##### BEGIN MODIFICATION FROM ORIGINAL RAILS CODE #####
+      options =
+        if request.env["openstax_path_prefixer_already_prefixed"]
+          options
+        else
+          request.env["openstax_path_prefixer_already_prefixed"] = true
+          "/#{OpenStax::PathPrefixer.configuration.prefix}#{options}"
+        end
+      ##### END MODIFICATION FROM ORIGINAL RAILS CODE   #####
 
-    location_uri = URI(location)
-
-    # If we have already been in this method and prefixed, just return; can happen
-    # b/c the original method is recursive.  We only want to prefix once.
-    return location if request.env["openstax_path_prefixer_already_prefixed"]
-
-    # Don't prefix if the redirected location is at an external site
-    return location if location_uri.host != request.host
-
-    # Don't prefix if the request wasn't prefixed
-    return location if !request.env["openstax_path_prefixer_request_was_prefixed"]
-
-    # Do the prefixing and remember that we did it
-    location_uri.path = "/#{OpenStax::PathPrefixer.configuration.prefix}#{location_uri.path}"
-    request.env["openstax_path_prefixer_already_prefixed"] = true
-
-    location_uri.to_s
+      request.protocol + request.host_with_port + options
+    when Proc
+      _compute_redirect_to_location request, instance_eval(&options)
+    else
+      url_for(options)
+    end.delete("\0\r\n")
   end
 
 end

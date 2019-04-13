@@ -11,4 +11,9 @@ Rails.application.routes.draw do
   end
 
   get '', to: "dummy#root"
+
+  resources :url_helper, only: [] do
+    get :an_action, on: :collection
+    get :another_action, on: :collection
+  end
 end

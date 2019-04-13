@@ -13,8 +13,10 @@ module OpenStax
           if env['PATH_INFO'] == "/#{prefix}" ||
              env['PATH_INFO'].starts_with?("/#{prefix}/")
 
+            # Take the prefix out so that the request routes appropriately
             env['PATH_INFO'].gsub!(/^\/#{prefix}/,'')
-            env["openstax_path_prefixer_request_was_prefixed"] = true
+            # set the script name so that URL and path helpers prepend the prefix
+            env['SCRIPT_NAME'] = "/#{prefix}"
           end
         end
 
