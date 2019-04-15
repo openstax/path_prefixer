@@ -1,4 +1,5 @@
 require 'openstax/path_prefixer/railtie'
+require 'openstax/path_prefixer/action_controller_base_extensions'
 
 module OpenStax
   module PathPrefixer

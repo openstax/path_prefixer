@@ -24,7 +24,7 @@ RSpec.describe OpenStax::PathPrefixer::Middleware do
   end
 
   def expect_path(path)
-    expect(app).to receive(:call).with({'PATH_INFO' => path})
+    expect(app).to receive(:call).with(a_hash_including('PATH_INFO' => path))
   end
 
   def call_with_path(path)
