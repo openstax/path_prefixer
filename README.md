@@ -21,3 +21,12 @@ OpenStax::PathPrefixer.configure do |config|
   config.prefix = "a_prefix"
 end
 ```
+
+This gem can also help to prefix assets.  This has only been shown to work when assets are precompiled, e.g. in production, so
+a configuration like the following is recommended:
+
+```rb
+OpenStax::PathPrefixer.configure do |config|
+  config.prefix_assets = Rails.env.production?
+end
+```

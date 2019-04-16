@@ -14,6 +14,12 @@ module OpenStax
 
     class Configuration
       attr_accessor :prefix
+      attr_accessor :prefix_assets
+
+      def initialize
+        @prefix = ""
+        @prefix_assets = Rails.env.test? ? true : false
+      end
     end
 
   end
