@@ -12,7 +12,8 @@ ActionController::Base.class_exec do
       options
     when String
       ##### BEGIN MODIFICATION FROM ORIGINAL RAILS CODE #####
-      options = "#{request.script_name}#{options}"
+      # Add the script name prefix unless it is alread there
+      options = "#{request.script_name}#{options}" unless options.match(/^#{request.script_name}/)
       ##### END MODIFICATION FROM ORIGINAL RAILS CODE   #####
 
       request.protocol + request.host_with_port + options
@@ -23,4 +24,13 @@ ActionController::Base.class_exec do
     end.delete("\0\r\n")
   end
 
+  alias_method :original_url_options, :url_options
+  def url_options
+    # Force the script_name to be in the URL options.  There are some times when
+    # Rails chooses not to, for some inexplicable reasons.  This was added due
+    # to real testing in openstax/accounts; not particularly spec'd here.
+    original_url_options.dup.tap{|options| options[:script_name] = request.script_name}
+  end
+
 end
+
