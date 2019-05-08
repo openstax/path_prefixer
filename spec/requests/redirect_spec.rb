@@ -35,6 +35,11 @@ RSpec.describe 'redirects', type: :request do
       expect(URI(response.location).path).to eq "/a_prefix/an_action"
     end
 
+    it "should not prefix a host-less redirect that doesn't match a route" do
+      get("/a_prefix/hostless_non_accounts_redirect")
+      expect(URI(response.location).path).to eq "/books/physics"
+    end
+
   end
 
   context "when incoming request does not have the prefix" do

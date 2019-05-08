@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     get :external_redirect
     get :a_prefix_blah
     get :a_prefix_blah_redirect
+    get :hostless_non_accounts_redirect
   end
 
   get '', to: "dummy#root"
