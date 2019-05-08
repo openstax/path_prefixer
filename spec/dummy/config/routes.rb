@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+
+  mount AnEngine::Engine, at: '/'
+
   scope controller: :dummy do
     get :an_action
     get :local_redirect_via_action
