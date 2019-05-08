@@ -31,6 +31,10 @@ class DummyController < ApplicationController
     redirect_to proc { an_action_url }
   end
 
+  def hostless_non_accounts_redirect
+    redirect_to "/books/physics"
+  end
+
   def a_prefix_blah
   end
 

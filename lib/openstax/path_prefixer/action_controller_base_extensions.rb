@@ -12,8 +12,23 @@ ActionController::Base.class_exec do
       options
     when String
       ##### BEGIN MODIFICATION FROM ORIGINAL RAILS CODE #####
-      # Add the script name prefix unless it is alread there
-      options = "#{request.script_name}#{options}" unless options.match(/^#{request.script_name}/)
+      # Add the script name prefix unless it is already there or
+      # if the path is not an app route path
+      if request.script_name.present?
+        already_has_prefix = options.match(/^#{request.script_name}/)
+
+        unless already_has_prefix
+          options_uri = URI(options)
+
+          path_matches_a_route = Rails.application.routes.set.any? do |route|
+            route.path.match(options_uri.path)
+          end
+
+          if path_matches_a_route
+            options = "#{request.script_name}#{options}"
+          end
+        end
+      end
       ##### END MODIFICATION FROM ORIGINAL RAILS CODE   #####
 
       request.protocol + request.host_with_port + options
