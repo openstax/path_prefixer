@@ -21,6 +21,7 @@ ActionController::Base.class_exec do
           options_uri = URI(options)
 
           path_matches_a_route = Rails.application.routes.set.any? do |route|
+            "GET".match(route.verb) &&
             route.path.match(options_uri.path)
           end
 

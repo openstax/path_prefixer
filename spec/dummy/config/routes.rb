@@ -14,6 +14,8 @@ Rails.application.routes.draw do
 
   get '', to: "dummy#root"
 
+  match 'books/physics', to: "dummy#root", via: [:options]
+
   resources :url_helper, only: [] do
     get :an_action, on: :collection
     get :another_action, on: :collection
