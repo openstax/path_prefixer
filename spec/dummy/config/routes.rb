@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+
+  mount AnEngine::Engine, at: '/'
+
   scope controller: :dummy do
     get :an_action
     get :local_redirect_via_action
@@ -13,6 +16,8 @@ Rails.application.routes.draw do
   end
 
   get '', to: "dummy#root"
+
+  match 'books/physics', to: "dummy#root", via: [:options]
 
   resources :url_helper, only: [] do
     get :an_action, on: :collection

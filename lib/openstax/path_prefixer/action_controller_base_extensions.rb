@@ -20,11 +20,8 @@ ActionController::Base.class_exec do
         unless already_has_prefix
           options_uri = URI(options)
 
-          path_matches_a_route = Rails.application.routes.set.any? do |route|
-            route.path.match(options_uri.path)
-          end
-
-          if path_matches_a_route
+          if _path_prefixer_routes_include_redirect_path(routes: Rails.application.routes,
+                                                         path: options_uri.path)
             options = "#{request.script_name}#{options}"
           end
         end
@@ -45,6 +42,22 @@ ActionController::Base.class_exec do
     # Rails chooses not to, for some inexplicable reasons.  This was added due
     # to real testing in openstax/accounts; not particularly spec'd here.
     original_url_options.dup.tap{|options| options[:script_name] = request.script_name}
+  end
+
+  def _path_prefixer_routes_include_redirect_path(routes:, path:)
+    routes.set.any? do |route|
+      next false unless "GET".match(route.verb)
+      next false unless route.path.match(path)
+
+      # Look for engine routes
+      inner_app = route.app.try(:app)
+
+      if inner_app && inner_app.respond_to?(:routes)
+        _path_prefixer_routes_include_redirect_path(routes: inner_app.routes, path: path)
+      else
+        true
+      end
+    end
   end
 
 end
