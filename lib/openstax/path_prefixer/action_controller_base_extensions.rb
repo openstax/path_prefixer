@@ -20,7 +20,8 @@ ActionController::Base.class_exec do
         unless already_has_prefix
           options_uri = URI(options)
 
-          if _path_prefixer_app_has_route_for_path(app: Rails.application, path: options_uri.path)
+          if _path_prefixer_routes_include_redirect_path(routes: Rails.application.routes,
+                                                         path: options_uri.path)
             options = "#{request.script_name}#{options}"
           end
         end
@@ -43,18 +44,16 @@ ActionController::Base.class_exec do
     original_url_options.dup.tap{|options| options[:script_name] = request.script_name}
   end
 
-  def _path_prefixer_app_has_route_for_path(app:, path:)
-    return false unless app.respond_to?(:routes)
-
-    app.routes.set.any? do |route|
+  def _path_prefixer_routes_include_redirect_path(routes:, path:)
+    routes.set.any? do |route|
       next false unless "GET".match(route.verb)
       next false unless route.path.match(path)
 
       # Look for engine routes
-      inner_app = route.app.app
+      inner_app = route.app.try(:app)
 
-      if inner_app.respond_to?(:routes)
-        _path_prefixer_app_has_route_for_path(app: inner_app, path: path)
+      if inner_app && inner_app.respond_to?(:routes)
+        _path_prefixer_routes_include_redirect_path(routes: inner_app.routes, path: path)
       else
         true
       end
