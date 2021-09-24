@@ -27,5 +27,3 @@ end
 gem "rails", rails
 
 gem "an_engine", path: "./spec/an_engine"
-
-gem "addressable"

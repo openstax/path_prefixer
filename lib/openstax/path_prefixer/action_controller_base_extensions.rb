@@ -1,3 +1,5 @@
+require 'addressable/uri'
+
 ActionController::Base.class_exec do
 
   # Copied from actionpack-5.2.3/lib/action_controller/metal/redirecting.rb
