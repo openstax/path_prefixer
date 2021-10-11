@@ -1,3 +1,5 @@
+require 'addressable/uri'
+
 ActionController::Base.class_exec do
 
   # Copied from actionpack-5.2.3/lib/action_controller/metal/redirecting.rb
@@ -18,7 +20,7 @@ ActionController::Base.class_exec do
         already_has_prefix = options.match(/^#{request.script_name}/)
 
         unless already_has_prefix
-          options_uri = URI(options)
+          options_uri = Addressable::URI.parse(options)
 
           if _path_prefixer_routes_include_redirect_path(routes: Rails.application.routes,
                                                          path: options_uri.path)
